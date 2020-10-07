@@ -12,6 +12,25 @@ library(tidyverse)
 
 ```{r}
 ### Import data
-mice_dat <- read_csv("/Users/SabrinaLin/Documents/Fall_2020_Causal_Inference/Homework/HW2/light.csv")
+mice_dat <- read_csv("/Users/SabrinaLin/Documents/Fall_2020_Causal_Inference/Homework/HW2/light.csv") %>% janitor::clean_names()
+```
+
+# Question 1 
+We are interested in the causal effect of light at night on weight gain. Plot the outcome by treatment group. 
+
+* DM= dark
+
+* LD =dim
+
+* LL =bright
+
+```{r}
+mice_dat %>% 
+  ggplot(aes(x = light, y = bm_gain)) + 
+  geom_point()
+
+mice_dat %>% 
+  ggplot(aes(x = light, y = bm_gain)) + 
+  geom_boxplot()
 ```
 
