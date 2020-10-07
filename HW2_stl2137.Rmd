@@ -34,3 +34,21 @@ mice_dat %>%
   geom_boxplot()
 ```
 
+# Question 2
+Here we will compare the mice exposed to darkness to the mice exposed to bright light overnight (once you have the code it is easy to rerun the analysis for the dim light group, if you are inter- ested). Subset the data to only consider these two groups. 
+
+```{r}
+dark_light_mice <- mice_dat %>% 
+  filter(
+    light %in% c("DM", "LL")
+  )
+```
+
+# Question 3
+
+Set up the data such that everything you will need has generic names (such as Yobs or whatever you want to call them). Everything specific to the context of your data (variable names, sample sizes) should only be in your R Script here. Everything else should be generic so you can copy/paste it for later use. What quantities will you need to evaluate the causal effect of light at night on weight gain?
+
+```{r}
+
+```
+
