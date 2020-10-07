@@ -1,0 +1,17 @@
+---
+title: "P8122 HW2"
+author: "Sabrina Lin stl2137"
+date: "10/7/2020"
+output: html_document
+---
+
+```{r setup, include=FALSE}
+knitr::opts_chunk$set(echo = TRUE)
+library(tidyverse)
+```
+
+```{r}
+### Import data
+mice_dat <- read_csv("/Users/SabrinaLin/Documents/Fall_2020_Causal_Inference/Homework/HW2/light.csv")
+```
+
