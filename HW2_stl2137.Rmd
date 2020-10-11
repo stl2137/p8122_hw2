@@ -8,6 +8,7 @@ output: html_document
 ```{r setup, include=FALSE}
 knitr::opts_chunk$set(echo = TRUE)
 library(tidyverse)
+library(ri)
 ```
 
 ```{r}
@@ -25,10 +26,12 @@ We are interested in the causal effect of light at night on weight gain. Plot th
 * LL =bright
 
 ```{r}
+### Scatterplot
 mice_dat %>% 
   ggplot(aes(x = light, y = bm_gain)) + 
   geom_point()
 
+### Boxplot 
 mice_dat %>% 
   ggplot(aes(x = light, y = bm_gain)) + 
   geom_boxplot()
@@ -38,7 +41,8 @@ mice_dat %>%
 Here we will compare the mice exposed to darkness to the mice exposed to bright light overnight (once you have the code it is easy to rerun the analysis for the dim light group, if you are inter- ested). Subset the data to only consider these two groups. 
 
 ```{r}
-dark_light_mice <- mice_dat %>% 
+### Subsetting data to only contain dark & bright light exposured mice
+dark_bright_mice <- mice_dat %>% 
   filter(
     light %in% c("DM", "LL")
   )
@@ -47,6 +51,60 @@ dark_light_mice <- mice_dat %>%
 # Question 3
 
 Set up the data such that everything you will need has generic names (such as Yobs or whatever you want to call them). Everything specific to the context of your data (variable names, sample sizes) should only be in your R Script here. Everything else should be generic so you can copy/paste it for later use. What quantities will you need to evaluate the causal effect of light at night on weight gain?
+
+```{r}
+### y_obs: bm_gain; A_treat: light; 
+
+dat <- dark_bright_mice %>% 
+  rename(
+    y_obs = bm_gain,
+    a_treat = light
+  ) %>% 
+  select(a_treat, y_obs) %>% 
+  arrange(a_treat)
+```
+
+* `light` is the treatment assignment variable and `bm_gain` is the outcome variable. 
+
+# Question 4
+
+Suppose we want the statistic to be the difference in means between the two treatment groups. Calculate Tobs.
+
+```{r}
+group_mean_dat <- aggregate(dat$y_obs, list(dat$a_treat), mean)
+
+t_obs <- group_mean_dat[1, 2] - group_mean_dat[2, 2]
+```
+
+* The difference in means between the 2 treatment groups, $T_{obs}$, is `r t_obs`.
+
+# Question 5
+
+How many different possibilities are there for A? Enumerate all of these possibilities in a matrix. (Hint: it’s probably easiest to first install the ri or perm package, have a look at the function chooseMatrix in R, it may come in handy.)
+
+```{r}
+# Assigning 0 = DM, 1 = LL
+a <- c(rep(0, 10), rep(1, 9))
+a_bold <- genperms(a, maxiter = 92378) # choose(19, 10) = 92378
+```
+
+# Question 6
+
+State the sharp null hypothesis of no difference. Calculate the test statistic under one of these possibilities for A (the first one), under the sharp null hypothesis.
+
+* The sharp null hypothesis of no difference is that there is no treatment effect between $Y_0$ and $Y_1$ for each individual observation. 
+
+* Mathematical representation: $H_0: \tau_i = Y_{0i} - Y_{1i} = 0$
+
+```{r}
+group_mean_sharp <- aggregate(dat$y_obs, list(a_bold[,1]), mean)
+
+t_obs_sharp <- group_mean_sharp[1, 2] - group_mean_sharp[2, 2]
+```
+
+# Question 7
+
+Generate the exact randomization distribution for T, under the sharp null hypothesis of no difference.
 
 ```{r}
 
