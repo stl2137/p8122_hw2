@@ -62,6 +62,9 @@ dat <- dark_bright_mice %>%
   ) %>% 
   select(a_treat, y_obs) %>% 
   arrange(a_treat)
+
+Y <- dat$y_obs
+a_treat <- dat$a_treat
 ```
 
 * `light` is the treatment assignment variable and `bm_gain` is the outcome variable. 
@@ -71,7 +74,7 @@ dat <- dark_bright_mice %>%
 Suppose we want the statistic to be the difference in means between the two treatment groups. Calculate Tobs.
 
 ```{r}
-group_mean_dat <- aggregate(dat$y_obs, list(dat$a_treat), mean)
+group_mean_dat <- aggregate(Y, list(a_treat), mean)
 
 t_obs <- group_mean_dat[1, 2] - group_mean_dat[2, 2]
 ```
@@ -86,6 +89,7 @@ How many different possibilities are there for A? Enumerate all of these possibi
 # Assigning 0 = DM, 1 = LL
 a <- c(rep(0, 10), rep(1, 9))
 a_bold <- genperms(a, maxiter = 92378) # choose(19, 10) = 92378
+
 ```
 
 # Question 6
@@ -97,16 +101,41 @@ State the sharp null hypothesis of no difference. Calculate the test statistic u
 * Mathematical representation: $H_0: \tau_i = Y_{0i} - Y_{1i} = 0$
 
 ```{r}
-group_mean_sharp <- aggregate(dat$y_obs, list(a_bold[,1]), mean)
+group_mean_sharp <- aggregate(Y, list(a_bold[,1]), mean)
 
 t_obs_sharp <- group_mean_sharp[1, 2] - group_mean_sharp[2, 2]
 ```
 
-# Question 7
+# Question 7 & 8
 
-Generate the exact randomization distribution for T, under the sharp null hypothesis of no difference.
+Generate the exact randomization distribution for T, under the sharp null hypothesis of no difference. Plot this distribution, and mark the observed test statistic.
 
 ```{r}
+rdist <- rep(NA, times = ncol(a_bold))
+
+for (i in 1:ncol(a_bold)){
+  a_tilde <- a_bold[,i]
+  rdist[i] <- mean(Y[a_tilde == 1]) - mean(Y[a_tilde == 0])
+}
+
+hist(rdist) 
+abline(v = t_obs_sharp, col = "red")
+```
+
+# Question 9 
+
+Calculate the exact p-value, based on this distribution.
+
+```{r}
+pval <- mean(rdist >= t_obs_sharp)
 
 ```
+
+The exact p-value is `r pval`.
+
+# Question 10 
+
+What do you conclude?
+
+* Because the null hypothesis is rejected, I conclude that there is a significant treatment difference between dim light and bright light in regards to weight gain for the mice. 
 
