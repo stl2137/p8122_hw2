@@ -6,12 +6,12 @@ output: html_document
 ---
 
 ```{r setup, include=FALSE}
-knitr::opts_chunk$set(echo = TRUE)
+knitr::opts_chunk$set(echo = FALSE)
 library(tidyverse)
 library(ri)
 ```
 
-```{r}
+```{r, message=FALSE}
 ### Import data
 mice_dat <- read_csv("/Users/SabrinaLin/Documents/Fall_2020_Causal_Inference/Homework/HW2/light.csv") %>% janitor::clean_names()
 ```
@@ -138,4 +138,9 @@ The exact p-value is `r pval`.
 What do you conclude?
 
 * Because the null hypothesis is rejected, I conclude that there is a significant treatment difference between dim light and bright light in regards to weight gain for the mice. 
+
+# Appendix
+```{r ref.label=knitr::all_labels(), echo = T, eval = F}
+
+```
 
